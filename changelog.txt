@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.12.0
+Date: 2019-10-07
+Author: GNBO
+  Features:
+    - Added support for mutiple stops with same name
+	  - Added push-pull train detection and signal
+  Bugfixes:
+    - fixed mutiple german translations
+---------------------------------------------------------------------------------------------------
 Version: 1.11.1
 Date: 2019-09-26
   Features:
