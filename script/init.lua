@@ -127,6 +127,9 @@ local function initialize(oldVersion, newVersion)
       stop.input.disconnect_neighbour({target_entity=stop.lampControl, wire=defines.wire_type.red})
       stop.input.connect_neighbour({target_entity=stop.lampControl, wire=defines.wire_type.green})
       stop.input.connect_neighbour({target_entity=stop.lampControl, wire=defines.wire_type.red})
+      
+	    -- update GNBO
+	    global.LogisticTrainStops[stopID].pushPull = global.LogisticTrainStops[stopID].pushPull or 0
     end
   end
 
