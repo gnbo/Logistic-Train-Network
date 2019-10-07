@@ -50,9 +50,9 @@ function TrainArrives(train)
 
         -- make train available for new deliveries
         local capacity, fluid_capacity = GetTrainCapacity(train)
-    		local bothDir = 0
-    		if train.valid and train.locomotives and (#train.locomotives.front_movers > 0 and #train.locomotives.back_movers > 0) then bothDir = 1 end
-        global.Dispatcher.availableTrains[train.id] = {train = train, force = loco.force.name, network_id = stop.network_id, capacity = capacity, fluid_capacity = fluid_capacity, bothDir = bothDir}
+    	  local bothDir = 0
+    	  if train.valid and train.locomotives and (#train.locomotives.front_movers > 0 and #train.locomotives.back_movers > 0) then bothDir = 1 end
+        global.Dispatcher.availableTrains[train.id] = {train = train, surface = loco.surface, force = loco.force, network_id = stop.network_id, capacity = capacity, fluid_capacity = fluid_capacity, bothDir = bothDir}
         global.Dispatcher.availableTrains_total_capacity = global.Dispatcher.availableTrains_total_capacity + capacity
         global.Dispatcher.availableTrains_total_fluid_capacity = global.Dispatcher.availableTrains_total_fluid_capacity + fluid_capacity
         -- log("added available train "..train.id..", inventory: "..tostring(global.Dispatcher.availableTrains[train.id].capacity)..", fluid capacity: "..tostring(global.Dispatcher.availableTrains[train.id].fluid_capacity))
