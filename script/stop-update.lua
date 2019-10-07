@@ -65,6 +65,11 @@ function UpdateStop(stopID, stop)
       table.remove(stop.activeDeliveries, i)
       if message_level >= 1 then printmsg({"ltn-message.error-invalid-delivery", stop.entity.backer_name}) end
       if debug_log then log("(UpdateStop) Removing invalid delivery from stop '"..tostring(stop.entity.backer_name).."': "..tostring(stop.activeDeliveries[i])) end
+	    if #stop.activeDeliveries > 0 then
+	  	setLamp(stop, "yellow", #stop.activeDeliveries)
+	    else
+	  	setLamp(stop, "green", 1)
+	    end
     end
   end
 
@@ -78,6 +83,7 @@ function UpdateStop(stopID, stop)
   stop.provideThreshold = min_provided
   stop.providePriority = 0
   stop.lockedSlots = 0
+  stop.pushPull = 0
 
   -- add missing stops to name list
   if not global.TrainStopNames[stop.entity.backer_name] then
@@ -124,6 +130,7 @@ function UpdateStop(stopID, stop)
   local provideStackThreshold = 0
   local providePriority = 0
   local lockedSlots = 0
+  local pushPull = 0
 
   -- get circuit values 0.16.24
   local signals = stop.input.get_merged_signals()
@@ -167,6 +174,10 @@ function UpdateStop(stopID, stop)
           providePriority = v.count
         elseif v.signal.name == LOCKEDSLOTS and v.count > 0 then
           lockedSlots = v.count
+    		elseif v.signal.name == PUSHPULL and v.count > 0 then
+          pushPull = 1
+	    	elseif v.signal.name == PUSHPULL and v.count < 0 then
+          pushPull = -1
         end
       end
   end
@@ -179,7 +190,7 @@ function UpdateStop(stopID, stop)
   -- .." provideThreshold:"..provideThreshold.." providePriority:"..providePriority.." lockedSlots:"..lockedSlots)
 
   -- skip duplicated names on non depots
-  if #global.TrainStopNames[stop.entity.backer_name] ~= 1 and not isDepot then
+--[[  if #global.TrainStopNames[stop.entity.backer_name] ~= 1 and not isDepot then
     stop.errorCode = 2
     if stop.parkedTrainID and global.Dispatcher.availableTrains[stop.parkedTrainID] then
       remove_available_train(stop.parkedTrainID)
@@ -187,7 +198,7 @@ function UpdateStop(stopID, stop)
     setLamp(stop, ErrorCodes[stop.errorCode], 1)
     if debug_log then log("(UpdateStop) Duplicate stop name: "..stop.entity.backer_name) end
     return
-  end
+  end]]
 
   --update lamp colors when errorCode or isDepot changed state
   if stop.errorCode ~=0 or stop.isDepot ~= isDepot then
@@ -230,7 +241,9 @@ function UpdateStop(stopID, stop)
           local loco = get_main_locomotive(stop.parkedTrain)
           if loco then
             local capacity, fluid_capacity = GetTrainCapacity(stop.parkedTrain)
-            global.Dispatcher.availableTrains[stop.parkedTrainID] = {train = stop.parkedTrain, force = loco.force.name, network_id = network_id, capacity = capacity, fluid_capacity = fluid_capacity}
+	    	  	local bothDir = 0
+		        if stop.parkedTrain.valid and stop.parkedTrain.locomotives and (#stop.parkedTrain.locomotives.front_movers > 0 and #stop.parkedTrain.locomotives.back_movers > 0) then bothDir = 1 end
+            global.Dispatcher.availableTrains[stop.parkedTrainID] = {train = stop.parkedTrain, force = loco.force.name, network_id = network_id, capacity = capacity, fluid_capacity = fluid_capacity, bothDir = bothDir}
             global.Dispatcher.availableTrains_total_capacity = global.Dispatcher.availableTrains_total_capacity + capacity
             global.Dispatcher.availableTrains_total_fluid_capacity = global.Dispatcher.availableTrains_total_fluid_capacity + fluid_capacity
           end
@@ -367,6 +380,7 @@ function UpdateStop(stopID, stop)
     stop.trainLimit = trainLimit
     stop.lockedSlots = lockedSlots
     stop.noWarnings = noWarnings
+	  stop.pushPull = pushPull
   end
 end
 
