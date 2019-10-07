@@ -53,6 +53,14 @@ data:extend({
   },
   {
     type = "virtual-signal",
+    name = "ltn-push-pull-train",
+    icon = "__LogisticTrainNetwork__/graphics/icons/push-pull.png",
+    icon_size = 32,
+    subgroup = "LTN-signal",
+    order = "z[LTN-signal]-bd[ltn-push-pull-train]"
+  },
+  {
+    type = "virtual-signal",
     name = "ltn-provider-threshold",
     icon = "__LogisticTrainNetwork__/graphics/icons/provider-threshold.png",
     icon_size = 32,
