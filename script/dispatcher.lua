@@ -248,10 +248,11 @@ local function getProviders(requestStation, item, req_count, min_length, max_len
       -- and count >= stop.provideThreshold
       and (stop.minTraincars == 0 or max_length == 0 or stop.minTraincars <= max_length)
       and (stop.maxTraincars == 0 or min_length == 0 or stop.maxTraincars >= min_length)
-      and (stop.pushPull == 0 or pushPull == 0 or stop.pushPull == pushPull)   then --check if provider can actually service trains from requester  local activeDeliveryCount = #stop.activeDeliveries
+      and (stop.pushPull == 0 or pushPull == 0 or stop.pushPull == pushPull)   then --check if provider can actually service trains from requester
+        local activeDeliveryCount = #stop.activeDeliveries
         local from_network_id_string = format("0x%x", band(stop.network_id))
         if activeDeliveryCount and (stop.trainLimit == 0 or activeDeliveryCount < stop.trainLimit) then
-		      if stop.pushPull == nil then stop.pushPull = 0 printmsg("GN: PushPull = 0") end
+          if stop.pushPull == nil then stop.pushPull = 0 printmsg("GN: PushPull = 0") end
           if debug_log then log("found "..count.."("..tostring(stop.provideThreshold)..")".."/"..req_count.." ".. item.." at "..stop.entity.backer_name.." {"..from_network_id_string.."}, priority: "..stop.providePriority..", active Deliveries: "..activeDeliveryCount.." minTraincars: "..stop.minTraincars..", maxTraincars: "..stop.maxTraincars..", locked Slots: "..stop.lockedSlots..", pushPull: "..stop.pushPull) end
           stations[#stations +1] = {
             entity = stop.entity,
@@ -265,7 +266,7 @@ local function getProviders(requestStation, item, req_count, min_length, max_len
             minTraincars = stop.minTraincars,
             maxTraincars = stop.maxTraincars,
             lockedSlots = stop.lockedSlots,
-			      pushPull = stop.pushPull,
+            pushPull = stop.pushPull,
           }
         end
       end
